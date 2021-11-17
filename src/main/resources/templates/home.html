@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <body>
+
+        <div class="container" id="root">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand" href="#">Navbar</a>
+
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#">Disabled</a>
+                        </li>
+                    </ul>
+                    <form class="form-inline my-2 my-lg-0">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+            <div>
+                <router-view></router-view>
+            </div>
+
+        </div>
+        <template id="home">
+            <div class="">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Job Title</th>
+                            <th scope="col">D.O.B</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user in users">
+                            <th scope="row">{{user.firstName}}</th>
+                            <td>{{user.lastName}}</td>
+                            <td>{{user.jobTitle}}</td>
+                            <td>{{new Date(user.dob).toLocaleDateString()}}</td>
+                            <td><a class="" v-bind:href="'/school/' + school.schoolid">Update</a></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template id="addUser">
+            <div>
+                <form>
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="First name" v-model="firstName">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Last name" v-model="lastName">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <input type="date" class="form-control" placeholder="First name" v-model="dob">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Last name" v-model="jobTitle">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" @click.prevent="addUser">Save</button>
+                </form>
+            </div>
+        </template>
+
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+
+const addUser = Vue.component('app-admin1', {
+
+    data: function () {
+        return {
+
+            firstName: '',
+            lastName: '',
+            jobTitle: '',
+            id: '',
+            dob: ''
+        }
+    },
+    mounted() {
+        this.fetchCategories();
+    },
+    methods: {
+        addUser() {
+            const fd = new FormData();
+            fd.append('firstName', this.firstName);
+            fd.append('lastName', this.lastName);
+            fd.append('jobTitle', this.jobTitle);
+            fd.append('id', this.id);
+            fd.append('dob', this.dob);
+            axios.post("/save", fd, {
+                onUploadProgress: uploadEvent => {
+                    console.log('Upload Progress: ' + Math.round(uploadEvent.loaded / uploadEvent.total * 100 + '%'))
+                }
+            }, {
+                // body : this.input.body,
+                //title : this.input.title
+            }).then(function (response) {
+
+            }.bind(this))
+            this.clear()
+        },
+        clear() {
+            this.firstName = '';
+            this.lastName = '';
+            this.jobTitle = '';
+            this.id = '';
+            this.dob = '';
+        }
+    },
+    template: '#addUser'
+})
+
+const home = Vue.component('app-admin1', {
+
+    data: function () {
+        return {
+
+            users: [],
+        }
+    },
+    mounted() {
+        this.fetchUsers();
+    },
+    methods: {
+
+        fetchUsers(discipline) {
+            console.log("running");
+            axios.get("/allusers", {
+                params: {
+                    category: this.catId,
+                    discipline: discipline
+                }
+            }).then(function (response) {
+                this.users = response.data;
+            }.bind(this));
+        }
+    },
+    template: '#home'
+});
+
+
+const routes = [
+    {path: '/allusers', name: 'home', component: home},
+    {path: '/addUser', component: addUser},
+];
+
+const router = new VueRouter({
+
+    routes, // short for `routes: routes`
+    //mode: 'history'
+});
+var vm = new Vue({
+    el: '#root',
+    data: {
+        student: '',
+        studentId: '',
+        categories: []
+    },
+    router,
+
+    created() {
+        this.$router.push({
+            name: 'home',
+
+        });
+    },
+    methods: {
+        addUser(user) {
+            this.$router.push({
+                name: 'addUser',
+                params: {
+                    user: user // or anything you want
+                }
+
+            });
+        },
+        loadDiscipline(update) {
+            this.$router.push({
+                name: 'discipline',
+                params: {
+                    update: update // or anything you want
+                }
+
+            });
+        },
+        loadEvent(update) {
+            this.$router.push({
+                name: 'event',
+                params: {
+                    update: update // or anything you want
+                }
+
+            });
+        },
+        loadRecord(update) {
+            this.$router.push({
+                name: 'record',
+                params: {
+                    update: update // or anything you want
+                }
+
+            });
+        },
+        loadVitals(update) {
+            this.$router.push({
+                name: 'vital',
+                params: {
+                    update: update // or anything you want
+                }
+
+            });
+        },
+        loadAD(update) {
+            this.$router.push({
+                name: 'ad',
+                params: {
+                    update: update // or anything you want
+                }
+            });
+        },
+        loadView(name) {
+            this.$router.push({
+                name: name
+
+            });
+        }
+
+
+    }
+
+});
+        </script>
+    </body>
+</html>
